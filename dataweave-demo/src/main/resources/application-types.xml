@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="EmployeeMetaDataJSON" format="json">
+      <types:shape format="weave" example="examples/employee.json"><![CDATA[%dw 2.0
+
+type EmployeeMetaDataJSON = {|
+  empID: Number {"typeId": "int"}, 
+  empName: String, 
+  empEmail: String, 
+  empStatus: String
+|} {"example": "{\\\"empID\\\":12345,\\\"empName\\\":\\\"Suman\\\",\\\"empEmail\\\":\\\"sumansaurav.dyp@gmail.com\\\",\\\"empStatus\\\":\\\"A\\\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="BookMetaDataXML" format="xml">
+      <types:example format="xml" element="book" location="examples/book.xml"/>
+    </types:type>
+    <types:type name="BookMetaDataJSON" format="json">
+      <types:shape format="weave" example="examples/book.json"><![CDATA[%dw 2.0
+
+type BookMetaDataJSON = {|
+  item: {|
+    "type": String, 
+    price: Number {"typeId": "int"}, 
+    properties: {|
+      title: String, 
+      author: Array<String>, 
+      year: Number {"typeId": "int"}, 
+      language: String
+    |}
+  |}
+|} {"example": "{\\\"item\\\":{\\\"type\\\":\\\"book\\\",\\\"price\\\":50,\\\"properties\\\":{\\\"title\\\":\\\"Everyday Italian\\\",\\\"author\\\":[\\\"Giada De Laurentiis\\\"],\\\"year\\\":2005,\\\"language\\\":\\\"en\\\"}}}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#ff39c23c-cf09-4801-9f03-d06d82dc0868">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="EmployeeMetaDataJSON"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="EmployeeMetaDataJSON"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#8484a376-a30c-4cfa-bde0-54287b27540d">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="BookMetaDataXML"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="BookMetaDataJSON"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#32a2b674-13e2-4bb9-9477-f72914007e9c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="BookMetaDataJSON"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="BookMetaDataXML"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

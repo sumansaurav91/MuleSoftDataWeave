@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="dataweave-demoFlow" doc:id="9295c5e2-ad4f-456f-af7f-3e8251fa8b19" >
+		<ee:transform doc:name="Transform JSON To All Types" doc:id="ff39c23c-cf09-4801-9f03-d06d82dc0868" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+{
+	empID: payload.empID,
+	empName: payload.empName,
+	empEmail: payload.empEmail,
+	empStatus: payload.empStatus
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dataweave-demoFlow1" doc:id="90de9183-7fae-433a-81a8-53f7010b2ad2" >
+		<ee:transform doc:name="Transform XML To All Types" doc:id="8484a376-a30c-4cfa-bde0-54287b27540d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	item: {
+		price: payload.book.price,
+		properties: {
+			title: payload.book.title,
+			author: payload.book.author,
+			year: payload.book.year
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dataweave-demoFlow2" doc:id="492290f9-d881-433c-bae1-4d24871966ba" >
+		<ee:transform doc:name="Transform JSON Based Attribute To XML" doc:id="32a2b674-13e2-4bb9-9477-f72914007e9c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	book: {
+		title @(lang: payload.item.properties.language): payload.item.properties.title,
+		year: payload.item.properties.year,
+		price: payload.item.price,
+		author @(loc: "US"): payload.item.properties.author[0]
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
